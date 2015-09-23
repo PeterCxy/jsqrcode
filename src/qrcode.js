@@ -24,6 +24,7 @@ QrCode= function ()
 	this.height = 0;
 	this.qrCodeSymbol = null;
 	this.debug = false;
+	this.pixelLength = 4;
 
 
 this.callback = null;
@@ -51,7 +52,14 @@ this.decode = function(src,data){
 		// this.imagedata.data=data
 		this.imagedata.width=src.width
 		this.imagedata.height=src.height
-
+		
+		if (src.colorSpace != undefined) {
+			if (src.colorSpace === 'rgb') {
+				this.pixelLength = 3;
+			} else if (src.colorSpace == 'rgba') {
+				this.pixelLength = 4;
+			}
+		}
 
 			this.result = this.process(this.imagedata);
 
@@ -168,7 +176,7 @@ this.getPixel = function(imageData, x,y){
 	if (imageData.height < y) {
 		throw "point error";
 	}
-	point = (x * 4) + (y * imageData.width * 4);
+	point = (x * this.pixelLength) + (y * imageData.width * this.pixelLength);
 	p = (imageData.data[point]*33 + imageData.data[point + 1]*34 + imageData.data[point + 2]*33)/100;
 	return p;
 }
